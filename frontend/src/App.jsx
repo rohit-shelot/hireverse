@@ -31,7 +31,7 @@ function App() {
               } 
             />
             <Route 
-              path="/company" 
+              path="/company/:slug" 
               element={
                 <ProtectedRoute allowedRole="ROLE_COMPANY">
                   <CompanyDashboard />

@@ -12,6 +12,7 @@ public class Company {
     private String name;
     private String location;
     private String industry;
+    private String slug;
 
     // Getters and Setters
     public String getId() { return id; }
@@ -24,4 +25,6 @@ public class Company {
     public void setLocation(String location) { this.location = location; }
     public String getIndustry() { return industry; }
     public void setIndustry(String industry) { this.industry = industry; }
+    public String getSlug() { return slug; }
+    public void setSlug(String slug) { this.slug = slug; }
 }

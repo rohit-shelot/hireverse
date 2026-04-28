@@ -37,7 +37,16 @@ const Login = () => {
         toast.success('Login successful!');
         
         if (data.role === 'ROLE_ADMIN') navigate('/admin');
-        else if (data.role === 'ROLE_COMPANY') navigate('/company');
+        else if (data.role === 'ROLE_COMPANY') {
+          // Fetch company profile to get slug
+          const profileRes = await fetch(`http://localhost:8081/api/companies/profile/${data.userId}`);
+          if (profileRes.ok) {
+            const company = await profileRes.json();
+            navigate(`/company/${company.slug}`);
+          } else {
+            navigate('/company'); // Fallback
+          }
+        }
         else if (data.role === 'ROLE_STUDENT') navigate('/student');
       } else if (response.status === 403) {
         toast.error('Account not verified. Redirecting to verification...');

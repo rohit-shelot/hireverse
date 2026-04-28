@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 
 const CompanyDashboard = () => {
+  const { slug } = useParams();
+  const navigate = useNavigate();
   const [jobs, setJobs] = useState([]);
   const [colleges, setColleges] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -31,31 +34,33 @@ const CompanyDashboard = () => {
         fetchAllJobsForAdmin();
         fetchColleges();
       } else {
-        fetchCompanyProfile();
+        fetchCompanyBySlug();
         fetchColleges();
       }
     }
-  }, []);
+  }, [slug]);
 
-  const fetchAllJobsForAdmin = async () => {
-    setLoading(true);
+  const fetchCompanyBySlug = async () => {
     try {
-      const response = await fetch('http://localhost:8081/api/students/jobs');
-      if (response.ok) setJobs(await response.json());
-    } catch (error) { toast.error('Failed to load all jobs'); }
-    finally { setLoading(false); }
-  };
-
-  const fetchCompanyProfile = async () => {
-    try {
-      const response = await fetch(`http://localhost:8081/api/companies/profile/${user.userId}`);
+      const response = await fetch(`http://localhost:8081/api/companies/slug/${slug}`);
       if (response.ok) {
         const data = await response.json();
+        
+        // Security check: only show own dashboard if not admin
+        if (user.role === 'ROLE_COMPANY' && data.userId !== user.userId) {
+          toast.error("Unauthorized access to this company dashboard");
+          navigate('/login');
+          return;
+        }
+
         setCompany(data);
         setProfileForm({ name: data.name, industry: data.industry, location: data.location });
         fetchJobs(data.id);
+      } else {
+        toast.error('Company not found');
+        navigate('/login');
       }
-    } catch (error) { toast.error('Failed to load profile'); }
+    } catch (error) { toast.error('Failed to load company profile'); }
   };
 
   const fetchColleges = async () => {

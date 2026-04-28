@@ -27,6 +27,16 @@ public class CompanyController {
     @Autowired
     private CollegeService collegeService;
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Company> getCompany(@PathVariable String id) {
+        return ResponseEntity.ok(companyService.getCompanyById(id));
+    }
+
+    @GetMapping("/slug/{slug}")
+    public ResponseEntity<Company> getCompanyBySlug(@PathVariable String slug) {
+        return ResponseEntity.ok(companyService.getCompanyBySlug(slug));
+    }
+
     @GetMapping("/colleges")
     public ResponseEntity<List<College>> getAllColleges() {
         return ResponseEntity.ok(collegeService.getAllColleges());

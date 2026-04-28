@@ -17,6 +17,9 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @Autowired
+    private com.campus.backend.repository.CompanyRepository companyRepository;
+
     @org.springframework.beans.factory.annotation.Value("${admin.email}")
     private String adminEmail;
 
@@ -50,5 +53,16 @@ public class DataInitializer implements CommandLineRunner {
                 System.out.println("Default Admin created: " + adminEmail);
             }
         );
+
+        // Migration: Ensure all existing companies have slugs
+        companyRepository.findAll().forEach(company -> {
+            if (company.getSlug() == null || company.getSlug().isEmpty()) {
+                String slug = company.getName().toLowerCase().replaceAll("[^a-z0-9]", "-").replaceAll("-+", "-");
+                if (slug.endsWith("-")) slug = slug.substring(0, slug.length() - 1);
+                company.setSlug(slug);
+                companyRepository.save(company);
+                System.out.println("Migrated slug for company: " + company.getName());
+            }
+        });
     }
 }

@@ -45,11 +45,19 @@ public class CompanyService {
         user.setPassword(passwordEncoder.encode(dto.getPassword()));
         user.setRole(Role.ROLE_COMPANY);
         
-        // No MFA for Companies: Auto-verify
-        user.setVerified(true);
-        user.setOtp(null);
+        // MFA: Generate Secure OTP
+        java.security.SecureRandom random = new java.security.SecureRandom();
+        int otpValue = 100000 + random.nextInt(900000);
+        String otp = String.valueOf(otpValue);
+        
+        user.setOtp(otp);
+        user.setOtpExpiry(System.currentTimeMillis() + 300000); // 5 minutes
+        user.setVerified(false);
         
         user = userRepository.save(user);
+
+        // MFA: Send OTP
+        emailService.sendOtp(user.getEmail(), otp);
 
         // 3. Create Company profile
         Company company = new Company();
@@ -57,6 +65,11 @@ public class CompanyService {
         company.setName(dto.getName());
         company.setIndustry(dto.getIndustry());
         company.setLocation(dto.getLocation());
+        
+        // Generate Slug (e.g. "Bajaj Finserv" -> "bajaj-finserv")
+        String slug = dto.getName().toLowerCase().replaceAll("[^a-z0-9]", "-").replaceAll("-+", "-");
+        if (slug.endsWith("-")) slug = slug.substring(0, slug.length() - 1);
+        company.setSlug(slug);
 
         return companyRepository.save(company);
     }
@@ -74,6 +87,11 @@ public class CompanyService {
 
     public Company getCompanyById(String companyId) {
         return companyRepository.findById(companyId)
+                .orElseThrow(() -> new RuntimeException("Company not found"));
+    }
+
+    public Company getCompanyBySlug(String slug) {
+        return companyRepository.findBySlug(slug)
                 .orElseThrow(() -> new RuntimeException("Company not found"));
     }
 
