@@ -17,6 +17,12 @@ public class DataInitializer implements CommandLineRunner {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    @org.springframework.beans.factory.annotation.Value("${admin.email}")
+    private String adminEmail;
+
+    @org.springframework.beans.factory.annotation.Value("${admin.password}")
+    private String adminPassword;
+
     @Override
     public void run(String... args) throws Exception {
         // Remove old admin if exists
@@ -25,23 +31,23 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println("Old admin admin@campus.com removed.");
         });
 
-        userRepository.findByEmail("hireverse@gmail.com").ifPresentOrElse(
+        userRepository.findByEmail(adminEmail).ifPresentOrElse(
             user -> {
                 user.setRole(Role.ROLE_ADMIN);
-                user.setPassword(passwordEncoder.encode("hireverse"));
+                user.setPassword(passwordEncoder.encode(adminPassword));
                 user.setName("System Admin");
                 userRepository.save(user);
-                System.out.println("Admin updated: hireverse@gmail.com / hireverse");
+                System.out.println("Admin updated: " + adminEmail);
             },
             () -> {
                 User admin = new User();
                 admin.setName("System Admin");
-                admin.setEmail("hireverse@gmail.com");
-                admin.setPassword(passwordEncoder.encode("hireverse"));
+                admin.setEmail(adminEmail);
+                admin.setPassword(passwordEncoder.encode(adminPassword));
                 admin.setRole(Role.ROLE_ADMIN);
                 admin.setVerified(true);
                 userRepository.save(admin);
-                System.out.println("Default Admin created: hireverse@gmail.com / hireverse");
+                System.out.println("Default Admin created: " + adminEmail);
             }
         );
     }
