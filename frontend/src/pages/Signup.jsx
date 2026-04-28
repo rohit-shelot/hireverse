@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../api';
 
 const Signup = () => {
   const [role, setRole] = useState('STUDENT');
@@ -47,7 +48,7 @@ const Signup = () => {
     };
 
     try {
-      const response = await fetch(`http://localhost:8081${endpoint}`, {
+      const response = await fetch(`${API_BASE_URL}${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)

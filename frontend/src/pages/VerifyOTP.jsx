@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../api';
 
 const VerifyOTP = () => {
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -54,7 +55,7 @@ const VerifyOTP = () => {
     
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8081/api/auth/verify-otp?email=${email}&otp=${otpCode}`, {
+      const response = await fetch(`${API_BASE_URL}/api/auth/verify-otp?email=${email}&otp=${otpCode}`, {
         method: 'POST'
       });
       if (response.ok) {

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../api';
 
 const AdminDashboard = () => {
   const [students, setStudents] = useState([]);
@@ -17,9 +18,9 @@ const AdminDashboard = () => {
   const fetchData = async () => {
     setLoading(true);
     try {
-      const studentRes = await fetch('http://localhost:8081/api/admin/students');
-      const companyRes = await fetch('http://localhost:8081/api/admin/companies');
-      const collegeRes = await fetch('http://localhost:8081/api/admin/colleges');
+      const studentRes = await fetch(`${API_BASE_URL}/api/admin/students`);
+      const companyRes = await fetch(`${API_BASE_URL}/api/admin/companies`);
+      const collegeRes = await fetch(`${API_BASE_URL}/api/admin/colleges`);
 
       if (studentRes.ok) setStudents(await studentRes.json());
       if (companyRes.ok) setCompanies(await companyRes.json());
@@ -36,7 +37,7 @@ const AdminDashboard = () => {
     e.preventDefault();
     console.log('Adding college:', newCollege);
     try {
-      const res = await fetch('http://localhost:8081/api/admin/colleges', {
+      const res = await fetch(`${API_BASE_URL}/api/admin/colleges`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newCollege)
@@ -67,7 +68,7 @@ const AdminDashboard = () => {
   const deleteStudent = async (id) => {
     if (!window.confirm('Delete student?')) return;
     try {
-      const res = await fetch(`http://localhost:8081/api/admin/students/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE_URL}/api/admin/students/${id}`, { method: 'DELETE' });
       if (res.ok) {
         toast.success('Student deleted');
         setStudents(students.filter(s => s.id !== id));
@@ -78,7 +79,7 @@ const AdminDashboard = () => {
   const deleteCompany = async (id) => {
     if (!window.confirm('Delete company?')) return;
     try {
-      const res = await fetch(`http://localhost:8081/api/admin/companies/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE_URL}/api/admin/companies/${id}`, { method: 'DELETE' });
       if (res.ok) {
         toast.success('Company deleted');
         setCompanies(companies.filter(c => c.id !== id));
@@ -89,7 +90,7 @@ const AdminDashboard = () => {
   const deleteCollege = async (id) => {
     if (!window.confirm('Remove this college?')) return;
     try {
-      const res = await fetch(`http://localhost:8081/api/admin/colleges/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_BASE_URL}/api/admin/colleges/${id}`, { method: 'DELETE' });
       if (res.ok) {
         toast.success('College removed');
         setColleges(colleges.filter(c => c.id !== id));

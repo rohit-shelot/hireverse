@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../api';
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -22,7 +23,7 @@ const Login = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:8081/api/auth/login', {
+      const response = await fetch(`${API_BASE_URL}/api/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -39,7 +40,7 @@ const Login = () => {
         if (data.role === 'ROLE_ADMIN') navigate('/admin');
         else if (data.role === 'ROLE_COMPANY') {
           // Fetch company profile to get slug
-          const profileRes = await fetch(`http://localhost:8081/api/companies/profile/${data.userId}`);
+          const profileRes = await fetch(`${API_BASE_URL}/api/companies/profile/${data.userId}`);
           if (profileRes.ok) {
             const company = await profileRes.json();
             navigate(`/company/${company.slug}`);

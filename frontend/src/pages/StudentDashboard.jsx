@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../api';
 
 const StudentDashboard = () => {
   const user = JSON.parse(localStorage.getItem('user') || '{}');
@@ -28,7 +29,7 @@ const StudentDashboard = () => {
 
   const fetchStudentProfile = async () => {
     try {
-      const response = await fetch(`http://localhost:8081/api/students/profile/${user.userId}`);
+      const response = await fetch(`${API_BASE_URL}/api/students/profile/${user.userId}`);
       const data = await response.json();
       if (response.ok) {
         setStudent(data);
@@ -49,7 +50,7 @@ const StudentDashboard = () => {
 
   const fetchAppliedJobs = async (studentId) => {
     try {
-      const response = await fetch(`http://localhost:8081/api/students/${studentId}/applied-jobs`);
+      const response = await fetch(`${API_BASE_URL}/api/students/${studentId}/applied-jobs`);
       if (response.ok) {
         setAppliedJobIds(await response.json());
       }
@@ -58,7 +59,7 @@ const StudentDashboard = () => {
 
   const fetchJobs = async () => {
     try {
-      const response = await fetch('http://localhost:8081/api/students/jobs');
+      const response = await fetch(`${API_BASE_URL}/api/students/jobs`);
       const data = await response.json();
       if (response.ok) {
         setJobs(data);
@@ -78,7 +79,7 @@ const StudentDashboard = () => {
         skills: editForm.skills.split(',').map(s => s.trim()).filter(s => s !== '')
       };
 
-      const response = await fetch(`http://localhost:8081/api/students/profile/${user.userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/students/profile/${user.userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload)
@@ -104,7 +105,7 @@ const StudentDashboard = () => {
   const handleApply = async (jobId) => {
     if (!student) return;
     try {
-      const response = await fetch(`http://localhost:8081/api/students/apply?studentId=${student.id}&jobRoleId=${jobId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/students/apply?studentId=${student.id}&jobRoleId=${jobId}`, {
         method: 'POST'
       });
       if (response.ok) {

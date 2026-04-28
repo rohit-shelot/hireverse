@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
+import API_BASE_URL from '../api';
 
 const CompanyDashboard = () => {
   const { slug } = useParams();
@@ -42,7 +43,7 @@ const CompanyDashboard = () => {
 
   const fetchCompanyBySlug = async () => {
     try {
-      const response = await fetch(`http://localhost:8081/api/companies/slug/${slug}`);
+      const response = await fetch(`${API_BASE_URL}/api/companies/slug/${slug}`);
       if (response.ok) {
         const data = await response.json();
         
@@ -65,7 +66,7 @@ const CompanyDashboard = () => {
 
   const fetchColleges = async () => {
     try {
-      const res = await fetch('http://localhost:8081/api/companies/colleges');
+      const res = await fetch(`${API_BASE_URL}/api/companies/colleges`);
       if (res.ok) setColleges(await res.json());
     } catch (error) { console.error(error); }
   };
@@ -73,7 +74,7 @@ const CompanyDashboard = () => {
   const fetchJobs = async (companyId) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:8081/api/companies/${companyId}/jobs`);
+      const response = await fetch(`${API_BASE_URL}/api/companies/${companyId}/jobs`);
       if (response.ok) setJobs(await response.json());
     } catch (error) { toast.error('Failed to load jobs'); }
     finally { setLoading(false); }
@@ -81,7 +82,7 @@ const CompanyDashboard = () => {
 
   const fetchApplicants = async (jobId) => {
     try {
-      const response = await fetch(`http://localhost:8081/api/companies/jobs/${jobId}/applicants`);
+      const response = await fetch(`${API_BASE_URL}/api/companies/jobs/${jobId}/applicants`);
       if (response.ok) {
         setApplicants(await response.json());
         setViewingApplicantsFor(jobId);
@@ -92,7 +93,7 @@ const CompanyDashboard = () => {
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch(`http://localhost:8081/api/companies/profile/${user.userId}`, {
+      const response = await fetch(`${API_BASE_URL}/api/companies/profile/${user.userId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(profileForm)
@@ -127,7 +128,7 @@ const CompanyDashboard = () => {
 
   const handleSaveJob = async (e) => {
     e.preventDefault();
-    const url = editingJob ? `http://localhost:8081/api/companies/jobs/${editingJob.id}` : 'http://localhost:8081/api/companies/jobs';
+    const url = editingJob ? `${API_BASE_URL}/api/companies/jobs/${editingJob.id}` : `${API_BASE_URL}/api/companies/jobs`;
     try {
       const response = await fetch(url, {
         method: editingJob ? 'PUT' : 'POST',
