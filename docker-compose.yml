@@ -1,14 +1,15 @@
 services:
-  mysql_db:
-    image: mysql:8.0
-    container_name: campus_mysql
+  postgres_db:
+    image: postgres:15-alpine
+    container_name: campus_postgres
     environment:
-      MYSQL_ROOT_PASSWORD: root_password
-      MYSQL_DATABASE: campus_placement
+      POSTGRES_DB: campus_placement
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     ports:
-      - "3306:3306"
+      - "5432:5432"
     volumes:
-      - mysql_data:/var/lib/mysql
+      - postgres_data:/var/lib/postgresql/data
     networks:
       - campus_network
 
@@ -18,14 +19,14 @@ services:
     ports:
       - "8081:8081"
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql_db:3306/campus_placement?createDatabaseIfNotExist=true
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=root_password
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres_db:5432/campus_placement
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
       - JWT_SECRET=your_very_long_random_jwt_secret_key_here
       - HIBERNATE_DDL_AUTO=update
       - SHOW_SQL=true
     depends_on:
-      - mysql_db
+      - postgres_db
     networks:
       - campus_network
 
@@ -46,4 +47,4 @@ networks:
     driver: bridge
 
 volumes:
-  mysql_data:
+  postgres_data:

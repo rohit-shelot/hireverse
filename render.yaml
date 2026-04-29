@@ -1,0 +1,48 @@
+services:
+  # Backend Service
+  - type: web
+    name: campus-backend
+    runtime: docker
+    plan: free
+    region: oregon
+    envVars:
+      - key: PORT
+        value: 8081
+      - key: SPRING_DATASOURCE_URL
+        fromDatabase:
+          name: campus-db
+          property: connectionString
+      - key: SPRING_DATASOURCE_USERNAME
+        fromDatabase:
+          name: campus-db
+          property: user
+      - key: SPRING_DATASOURCE_PASSWORD
+        fromDatabase:
+          name: campus-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: HIBERNATE_DDL_AUTO
+        value: update
+      - key: SHOW_SQL
+        value: "false"
+
+  # Frontend Service
+  - type: web
+    name: campus-frontend
+    runtime: docker
+    plan: free
+    region: oregon
+    envVars:
+      - key: VITE_API_BASE_URL
+        fromService:
+          type: web
+          name: campus-backend
+          property: url
+
+databases:
+  - name: campus-db
+    databaseName: campus_placement
+    user: campus_user
+    plan: free
+    region: oregon
