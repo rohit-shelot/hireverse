@@ -19,10 +19,10 @@ RUN groupadd -r spring && useradd -r -g spring spring
 USER spring:spring
 
 # Copy only the built artifact from the build stage
-COPY --from=build /app/target/*.jar app.jar
+COPY --chown=spring:spring --from=build /app/target/*.jar app.jar
 
 # Standard port for Spring Boot
-EXPOSE 8081
+EXPOSE 8080
 
 # Optimize JVM for cloud/container environments
 ENTRYPOINT ["java", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]

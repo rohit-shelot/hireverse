@@ -7,11 +7,11 @@ services:
     region: oregon
     envVars:
       - key: PORT
-        value: 8081
+        value: 8080
       - key: SPRING_DATASOURCE_URL
         fromDatabase:
           name: campus-db
-          property: connectionString
+          property: jdbcConnectionString
       - key: SPRING_DATASOURCE_USERNAME
         fromDatabase:
           name: campus-db
